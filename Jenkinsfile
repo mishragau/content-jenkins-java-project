@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Unit Tests') {
       agent {
-        label 'apache'
+        label 'master_jenkins'
       }
       steps {
         sh 'ant -f test.xml -v'
@@ -17,7 +17,7 @@ pipeline {
     }
     stage('build') {
       agent {
-        label 'apache'
+        label 'master_jenkins'
       }
       steps {
         sh 'ant -f build.xml -v'
@@ -30,7 +30,7 @@ pipeline {
     }
     stage('deploy') {
       agent {
-        label 'apache'
+        label 'master_jenkins'
       }
       steps {
         sh "if ! [ -d '/var/www/html/rectangles/all/${env.BRANCH_NAME}' ]; then mkdir /var/www/html/rectangles/all/${env.BRANCH_NAME}; fi"
@@ -39,10 +39,10 @@ pipeline {
     }
     stage("Running on CentOS") {
       agent {
-        label 'CentOS'
+        label 'master_jenkins'
       }
       steps {
-        sh "wget http://13.59.110.147/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+        sh "wget http://18.221.161.92:8080/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
       }
     }
@@ -51,13 +51,13 @@ pipeline {
         docker 'openjdk:8u121-jre'
       }
       steps {
-        sh "wget http://13.59.110.147/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
+        sh "wget http://18.221.161.92:8080/rectangles/all/${env.BRANCH_NAME}/rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar"
         sh "java -jar rectangle_${env.MAJOR_VERSION}.${env.BUILD_NUMBER}.jar 3 4"
       }
     }
     stage('Promote to Green') {
       agent {
-        label 'apache'
+        label 'master_jenkins'
       }
       when {
         branch 'master'
@@ -68,7 +68,7 @@ pipeline {
     }
     stage('Promote Development Branch to Master') {
       agent {
-        label 'apache'
+        label 'master_jenkins'
       }
       when {
         branch 'development'
